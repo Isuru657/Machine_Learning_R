@@ -1,4 +1,5 @@
-# Machine_Learning_R
+# Machine Learning Repository
+
 This repository contains all the Machine Learning projects I have done using R.
 
 #The projects are as follows:
