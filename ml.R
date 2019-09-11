@@ -1,0 +1,27 @@
+
+don <- read.csv(file="https://assets.datacamp.com/production/repositories/718/datasets/9055dac929e4515286728a2a5dae9f25f0e4eff6/donors.csv")
+str(don)
+#Bulding a logistic regression model with a selected number of variables
+don_pred <- glm(donated ~ bad_address + interest_religion + interest_veterans, data=don, family="binomial")
+summary(don_pred)
+don$donation_prob <- predict(don_pred, type="response")
+don$donation_pred <- ifelse(don$donation_prob>0.050, 1,0)
+#Checking for accuracy in two ways:
+mean(don$donated==don$donation_pred)
+install.packages("pROC")
+library(pROC)
+ROC <- roc(don$donation_pred, don$donated)
+plot(ROC, col="blue")
+auc(ROC)
+#Building a stepwise regression model
+install.packages("olsrr")
+library(olsrr)
+fit <- lm(donated~. data=don)
+olsrr::ols_stepwise(fit, pent=0.1, prem=0.3, details= FALSE)
+null <- glm(donated~1, data=don, family="binomial")
+full <- glm(donated~., data=don, family="binomial")
+step <- step(null, scope=list(lower=null, upper=full, direction="forward"))
+prob <- predict(step, type="response")
+Roc <- roc(prob, don$donated)        
+plot(Roc, col="red")        
+auc(Roc)        
